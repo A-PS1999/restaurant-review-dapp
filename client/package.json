@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "ipfs-api": "^26.1.2",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-router-dom": "^5.2.0",

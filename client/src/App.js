@@ -1,7 +1,10 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
-import getWeb3 from "./getWeb3";
-
+import ReviewContract from "./contracts/SimpleStorage.json";
+import getWeb3 from "./utils/getWeb3";
+import ipfs from './utils/ipfs';
+import Navbar from './components/Navbar'
+import FrontPage from './components/FrontPage'
+import NewReview from './components/NewReview'
 import "./App.css";
 
 class App extends Component {
@@ -20,7 +23,7 @@ class App extends Component {
       const deployedNetwork = SimpleStorageContract.networks[networkId];
       const instance = new web3.eth.Contract(
         SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
+        deployedNetwork && deployedNetwork.address,	
       );
 
       // Set web3, accounts, and contract to the state, and then proceed with an

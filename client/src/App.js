@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import ReviewContract from "./contracts/SimpleStorage.json";
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import restaurantReviewer from "./abis/restaurantReviewer.json";
 import getWeb3 from "./utils/getWeb3";
 import ipfs from './utils/ipfs';
 import Navbar from './components/Navbar'
@@ -8,48 +9,74 @@ import NewReview from './components/NewReview'
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+	
+	addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash) {
+		this.setState({ isLoading: true })
+		this.state.contract.methods.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash).send({
+			from: this.state.account }).once('confirmation', (n, receipt) => {
+				this.setState({ isLoading: false })
+				window.location.reload()
+			})
+	}
+	
+	tipReview(id, tipValue) {
+		this.setState({ isLoading: true })
+		this.state.contract.methods.tipReview(id).send({ from: this.state.account, value: tipValue }).once(
+		'confirmation', (n, receipt) => {
+			this.setState({ isLoading: false })
+			window.location.reload()
+		})
+	}
+	
+	constructor(props) {
+		super(props)
+		this.state = {
+			web3: null,
+			account: null,
+			instance: null,
+			reviewCount: 0,
+			reviews: [],
+			ipfsHash: '',
+			isLoading: true
+		};
+		this.addReview = this.addReview.bind(this)
+		this.tipReview = this.tipReview.bind(this)
+	}
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
+	  this.setState({ web3 })
 
-      // Use web3 to get the user's accounts.
+      // Use web3 to get the user's account.
       const accounts = await web3.eth.getAccounts();
+	  this.setState({ account: accounts[0] })
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,	
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
-    }
-  };
-
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
-  };
+      const deployedNetwork = restaurantReviewer.networks[networkId];
+	  
+	  if(deployedNetwork) {
+		  const instance = new web3.eth.Contract(
+			restaurantReviewer.abi,
+			deployedNetwork && deployedNetwork.address,	
+		  );
+		  this.setState({ instance })
+		  const reviewCount = await instance.methods.reviewCount().call()
+		  this.setState({ instance })
+		  
+		  for (let i = 1; i <= reviewCount; i++) {
+			  const review = await instance.methods.reviews(i).call()
+			  this.setState({
+				  reviews: [...this.state.reviews, review]
+			  })
+		  }
+		  this.setState({ isLoading: false })
+	  } else {
+		  window.alert("The contract could not be deployed to a network.")
+	  }
+	}
 
   render() {
     if (!this.state.web3) {

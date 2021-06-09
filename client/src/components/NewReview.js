@@ -24,6 +24,7 @@ class NewReview extends Component {
 				console.log(error);
 				return
 			}
+			this.instance.set(result[0].hash, { from: this.state.account})
 			this.setState({ ipfsHash: result[0].hash })
 		})
 	}
@@ -40,8 +41,8 @@ class NewReview extends Component {
 							const restaurantName = this.nameInput.value
 							const cuisineType = this.cuisInput.value
 							const reviewBody = this.reviewInput.value
-							const ipfsHash = this.state.ipfsHash
 							this.getHash
+							const ipfsHash = this.state.ipfsHash
 							this.props.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash)
 						}}>
 						<center>

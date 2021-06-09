@@ -1,0 +1,161 @@
+{
+	"contractName": "RestaurantReviewer"
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "bytes20",
+					"name": "name",
+					"type": "bytes20"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "rNo",
+					"type": "uint256"
+				}
+			],
+			"name": "reviewSubmitted",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "rNo",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "_value",
+					"type": "uint256"
+				}
+			],
+			"name": "tipSent",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint8",
+					"name": "_rating",
+					"type": "uint8"
+				},
+				{
+					"internalType": "bytes20",
+					"name": "_restaurantName",
+					"type": "bytes20"
+				},
+				{
+					"internalType": "bytes20",
+					"name": "_cuisineType",
+					"type": "bytes20"
+				},
+				{
+					"internalType": "string",
+					"name": "_reviewBody",
+					"type": "string"
+				},
+				{
+					"internalType": "string",
+					"name": "_ipfsHash",
+					"type": "string"
+				}
+			],
+			"name": "addReview",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "reviewCount",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "reviews",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint8",
+					"name": "rating",
+					"type": "uint8"
+				},
+				{
+					"internalType": "uint256",
+					"name": "tipCount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes20",
+					"name": "restaurantName",
+					"type": "bytes20"
+				},
+				{
+					"internalType": "bytes20",
+					"name": "cuisineType",
+					"type": "bytes20"
+				},
+				{
+					"internalType": "string",
+					"name": "reviewBody",
+					"type": "string"
+				},
+				{
+					"internalType": "string",
+					"name": "ipfsHash",
+					"type": "string"
+				},
+				{
+					"internalType": "address payable",
+					"name": "author",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "reviewDate",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_id",
+					"type": "uint256"
+				}
+			],
+			"name": "tipReview",
+			"outputs": [],
+			"stateMutability": "payable",
+			"type": "function"
+		}
+	]
+}

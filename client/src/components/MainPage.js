@@ -9,6 +9,10 @@ class Main extends Component {
 		};
 	}
 	
+	const postDate = instance.methods.reviewDate.call(function(error, result) {
+		new Date(result * 1000);
+	})
+	
 	updateSearch(event) {
 		this.setState({search: event.target.value.substr(0, 20)});
 	}
@@ -38,12 +42,17 @@ class Main extends Component {
 								<br></br>
 								<h2>{review.restaurantName}</h2>
 								<p class="small">Author: {review.author}</p>
+								<p class="small">Reviewed on {postDate}</p>
 							</div>
 							<p>Rating: {review.rating.toString()} / 5</p>
 							<ul id="reviewList" className="list-group list-group-flush">
 								<li className="list-group-item">
 									<p>{review.reviewBody}</p>
 									<br></br>
+								</li>
+								<li className="list-group-item">
+									<p>Review Image</p>
+									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } alt="" />
 								</li>
 								<li key={key} className="list-group-item py-2">
 									<p className="float-left mt-1 text-muted small">

@@ -1,4 +1,3 @@
-const HDWalletProvider = require('truffle-hdwallet-provider');
 const path = require("path");
 
 module.exports = {
@@ -10,12 +9,12 @@ module.exports = {
 		host: "127.0.0.1",
 		port: 8545,
 		network_id: "*"
-    }
+    },
 	ganache: {
 		host: "127.0.0.1",
 		port: 7545,
 		network_id: "*"
-    }
+    },
   },
   compilers: {
 	  solc: {

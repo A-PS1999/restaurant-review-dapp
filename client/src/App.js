@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import restaurantReviewer from "./abis/restaurantReviewer.json";
-import getWeb3 from "./utils/getWeb3";
-import ipfs from './utils/ipfs';
-import Navbar from './components/Navbar'
-import FrontPage from './components/FrontPage'
-import NewReview from './components/NewReview'
+import restaurantReviewer from "./contracts/restaurantReviewer.json";
+import getWeb3 from "./utils/getWeb3.js";
+import ipfs from './utils/ipfs.js';
+import Navbar from './components/Navbar.js'
+import PageFooter from './components/Footer.js'
+import FrontPage from './components/FrontPage.js'
+import NewReview from './components/NewReview.js'
+import Main from './components/MainPage.js'
 import "./App.css";
 
 class App extends Component {
@@ -83,19 +85,31 @@ class App extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
-      </div>
+		<div>
+			<Router>
+			<Navbar />
+			<Route exact path="/" component={FrontPage} />
+			<Route exact path="/new-review" render={props => (
+				<React.Fragment>
+				{
+					this.state.loading
+					? <center><div class="loader"></div></center>
+					: <NewReview addReview={this.addReview} />
+				}
+				</React.Fragment>
+			)} />
+			<Route exact path="/reviews" render={props => (
+				<React.Fragment>
+				{
+					this.state.loading
+					? <center><div class="loader"></div></center>
+					: <Main reviews={this.state.reviews} tipReview={this.tipReview} />
+				}
+				</React.Fragment>
+			)} />
+			<PageFooter />
+			</Router>
+		</div>
     );
   }
 }

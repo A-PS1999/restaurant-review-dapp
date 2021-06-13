@@ -64,8 +64,16 @@ class Main extends Component {
 										className="button btn-info"
 										name={review.id}
 										onClick={(event) => {
-											let tipValue = window.web3.utils.toWei('0.1', 'Ether')
+											try {
+												let tipValue = window.web3.utils.toWei('0.1', 'Ether')
 											this.props.tipReview(event.target.name, tipValue)
+											
+											let tipEvent = instance.events.tipSent()
+											addToast('Sent a tip of ' + tipEvent.returnValues['_value'] + ' ETH to review ' +
+											tipEvent.returnValues['rNo'], { appearance: 'success' });
+											} catch(e) {
+												console.error(e)
+											}
 									}}>
 										Tip
 									</button>

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { ToastProvider, useToasts } from 'react-toast-notifications';
 import restaurantReviewer from "./contracts/restaurantReviewer.json";
 import getWeb3 from "./utils/getWeb3.js";
 import ipfs from './utils/ipfs.js';
@@ -11,6 +12,8 @@ import Main from './components/MainPage.js'
 import "./App.css";
 
 class App extends Component {
+	
+	const { addToast } = useToasts();
 	
 	addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash) {
 		this.setState({ isLoading: true })
@@ -86,6 +89,7 @@ class App extends Component {
     }
     return (
 		<div>
+			<ToastProvider>
 			<Router>
 			<Navbar />
 			<Route exact path="/" component={FrontPage} />
@@ -109,6 +113,7 @@ class App extends Component {
 			)} />
 			<PageFooter />
 			</Router>
+			</ToastProvider>
 		</div>
     );
   }

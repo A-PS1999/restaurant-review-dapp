@@ -36,7 +36,8 @@ class NewReview extends Component {
 				<main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '500px' }}>
 					<div className="content mr-auto ml-auto">
 						<form onSubmit={(event) => {
-							event.preventDefault()
+							try {
+								event.preventDefault()
 							const rating = this.ratingInput.value
 							const restaurantName = this.nameInput.value
 							const cuisineType = this.cuisInput.value
@@ -44,6 +45,13 @@ class NewReview extends Component {
 							this.getHash
 							const ipfsHash = this.state.ipfsHash
 							this.props.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash)
+							
+							let sentEvent = instance.events.reviewSubmitted()
+							addToast('Your review of ' + sentEvent.returnValues['name'] + ' has been submitted as ' +
+							sentEvent.returnValues['rNo'], { appearance: 'success' });
+							} catch(e) {
+								console.error(e)
+							}
 						}}>
 						<center>
 							<h1>Your review:</h1>

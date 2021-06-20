@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ToastProvider, useToasts } from 'react-toast-notifications';
+import { ToastProvider } from 'react-toast-notifications';
 import restaurantReviewer from "./contracts/restaurantReviewer.json";
 import getWeb3 from "./utils/getWeb3.js";
-import ipfs from './utils/ipfs.js';
 import Navbar from './components/Navbar.js'
 import PageFooter from './components/Footer.js'
 import FrontPage from './components/FrontPage.js'
@@ -13,45 +12,43 @@ import "./App.css";
 
 class App extends Component {
 	
-	const { addToast } = useToasts();
-	
-	addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash) {
-		this.setState({ isLoading: true })
-		this.state.contract.methods.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash).send({
-			from: this.state.account }).once('confirmation', (n, receipt) => {
-				this.setState({ isLoading: false })
-				window.location.reload()
-			})
-	}
-	
-	tipReview(id, tipValue) {
-		this.setState({ isLoading: true })
-		this.state.contract.methods.tipReview(id).send({ from: this.state.account, value: tipValue }).once(
-		'confirmation', (n, receipt) => {
+  addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash) {
+    this.setState({ isLoading: true })
+	this.state.contract.methods.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash).send({
+		from: this.state.account }).once('confirmation', (n, receipt) => {
 			this.setState({ isLoading: false })
 			window.location.reload()
 		})
 	}
 	
-	constructor(props) {
-		super(props)
-		this.state = {
-			web3: null,
-			account: null,
-			instance: null,
-			reviewCount: 0,
-			reviews: [],
-			ipfsHash: '',
-			isLoading: true
-		};
-		this.addReview = this.addReview.bind(this)
-		this.tipReview = this.tipReview.bind(this)
+  tipReview(id, tipValue) {
+	this.setState({ isLoading: true })
+	this.state.contract.methods.tipReview(id).send({ from: this.state.account, value: tipValue }).once(
+	'confirmation', (n, receipt) => {
+		this.setState({ isLoading: false })
+		window.location.reload()
+	  })
 	}
+	
+  constructor(props) {
+	super(props)
+	this.state = {
+		web3: null,
+		account: null,
+		instance: null,
+		reviewCount: 0,
+		reviews: [],
+		ipfsHash: '',
+		isLoading: true
+	};
+	this.addReview = this.addReview.bind(this)
+	this.tipReview = this.tipReview.bind(this)
+  }
 
-  componentDidMount = async () => {
+  async componentDidMount() {
     try {
       // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+	  const web3 = await getWeb3();
 	  this.setState({ web3 })
 
       // Use web3 to get the user's account.
@@ -72,32 +69,35 @@ class App extends Component {
 		  this.setState({ instance })
 		  
 		  for (let i = 1; i <= reviewCount; i++) {
-			  const review = await instance.methods.reviews(i).call()
-			  this.setState({
-				  reviews: [...this.state.reviews, review]
-			  })
+			const review = await instance.methods.reviews(i).call()
+			this.setState({
+				reviews: [...this.state.reviews, review]
+			})
 		  }
-		  this.setState({ isLoading: false })
+		this.setState({ isLoading: false })
 	  } else {
-		  window.alert("The contract could not be deployed to a network.")
+		window.alert("The contract could not be deployed to a network.")
 	  }
+	} catch(err) {
+		console.log(err);
 	}
+  }
 
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
-    return (
+	if (!this.state.web3) {
+		return <div>Loading Web3, accounts, and contract...</div>;
+	}
+	return (
 		<div>
 			<ToastProvider>
 			<Router>
 			<Navbar />
 			<Route exact path="/" component={FrontPage} />
-			<Route exact path="/new-review" render={props => (
+			<Route exact path="/newreview" render={props => (
 				<React.Fragment>
 				{
 					this.state.loading
-					? <center><div class="loader"></div></center>
+					? <center><div className="loader"></div></center>
 					: <NewReview addReview={this.addReview} />
 				}
 				</React.Fragment>
@@ -106,7 +106,7 @@ class App extends Component {
 				<React.Fragment>
 				{
 					this.state.loading
-					? <center><div class="loader"></div></center>
+					? <center><div className="loader"></div></center>
 					: <Main reviews={this.state.reviews} tipReview={this.tipReview} />
 				}
 				</React.Fragment>
@@ -115,8 +115,8 @@ class App extends Component {
 			</Router>
 			</ToastProvider>
 		</div>
-    );
-  }
+		);
+	}
 }
 
 export default App;

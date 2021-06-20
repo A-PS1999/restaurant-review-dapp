@@ -50,7 +50,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -109,7 +110,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -155,7 +157,8 @@
       "name": "tipReview",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function"
+      "type": "function",
+      "payable": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes20\",\"name\":\"name\",\"type\":\"bytes20\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rNo\",\"type\":\"uint256\"}],\"name\":\"reviewSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rNo\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"tipSent\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_rating\",\"type\":\"uint8\"},{\"internalType\":\"bytes20\",\"name\":\"_restaurantName\",\"type\":\"bytes20\"},{\"internalType\":\"bytes20\",\"name\":\"_cuisineType\",\"type\":\"bytes20\"},{\"internalType\":\"string\",\"name\":\"_reviewBody\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_ipfsHash\",\"type\":\"string\"}],\"name\":\"addReview\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"reviewCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"reviews\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"rating\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"tipCount\",\"type\":\"uint256\"},{\"internalType\":\"bytes20\",\"name\":\"restaurantName\",\"type\":\"bytes20\"},{\"internalType\":\"bytes20\",\"name\":\"cuisineType\",\"type\":\"bytes20\"},{\"internalType\":\"string\",\"name\":\"reviewBody\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"ipfsHash\",\"type\":\"string\"},{\"internalType\":\"address payable\",\"name\":\"author\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"reviewDate\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"}],\"name\":\"tipReview\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/Samuel/web3projects/restaurant-review-dapp/contracts/RestaurantReviewer.sol\":\"restaurantReviewer\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/Samuel/web3projects/restaurant-review-dapp/contracts/RestaurantReviewer.sol\":{\"keccak256\":\"0xb62dab14fcd2e2a05761d953baea429f87a14aac07e20b2f9e73ccfa73362713\",\"urls\":[\"bzz-raw://3647e59534fb4b2866e356f750a0837e6c7ab4d1137cd8a05d3c30664fb1f78b\",\"dweb:/ipfs/QmdeiMSuXsXeQtrYN22YACFsHHU89cCFXSqauKte7nmVyS\"]}},\"version\":1}",
@@ -11849,9 +11852,17 @@
     "name": "solc",
     "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x49A421F3ba8C7b04917e0e3F3423b5C3FF8239b2",
+      "transactionHash": "0x5d9a56541e256acdbedc01ecf9ad4728f3c798fee67622f5bff3346694c61209"
+    }
+  },
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-06-11T16:07:53.033Z",
+  "updatedAt": "2021-06-16T15:54:39.226Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},

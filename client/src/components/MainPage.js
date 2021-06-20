@@ -1,5 +1,17 @@
 import React, { Component } from 'react';
-import { Form } from 'react-bootstrap';
+import { useToasts } from 'react-toast-notifications';
+	
+function useTipToast() {
+  const { addToast } = useToasts();
+  
+  let tipEvent = this.instance.events.tipSent();
+  try {
+	addToast('Your review of ' + tipEvent.returnValues['name'] + ' has been submitted as ' +
+	tipEvent.returnValues['rNo'], { appearance: 'success' });
+  } catch(e) {
+	addToast("An error occurred", { appearance: 'error' })  
+  }
+};
 
 class Main extends Component {
 	constructor() {
@@ -8,10 +20,6 @@ class Main extends Component {
 			search: ''
 		};
 	}
-	
-	const postDate = instance.methods.reviewDate.call(function(error, result) {
-		new Date(result * 1000);
-	})
 	
 	updateSearch(event) {
 		this.setState({search: event.target.value.substr(0, 20)});
@@ -22,7 +30,6 @@ class Main extends Component {
 		(review) => {
 			return review.restaurantName.indexOf(this.state.search) !== -1;
 		});
-	}
 	
 	return (
 		<div className="container-fluid mt-5">
@@ -42,7 +49,7 @@ class Main extends Component {
 								<br></br>
 								<h2>{review.restaurantName}</h2>
 								<p class="small">Author: {review.author}</p>
-								<p class="small">Reviewed on {postDate}</p>
+								<p class="small">Reviewed on {review.reviewDate}</p>
 							</div>
 							<p>Rating: {review.rating.toString()} / 5</p>
 							<ul id="reviewList" className="list-group list-group-flush">
@@ -68,9 +75,7 @@ class Main extends Component {
 												let tipValue = window.web3.utils.toWei('0.1', 'Ether')
 											this.props.tipReview(event.target.name, tipValue)
 											
-											let tipEvent = instance.events.tipSent()
-											addToast('Sent a tip of ' + tipEvent.returnValues['_value'] + ' ETH to review ' +
-											tipEvent.returnValues['rNo'], { appearance: 'success' });
+											useTipToast()
 											} catch(e) {
 												console.error(e)
 											}
@@ -87,6 +92,7 @@ class Main extends Component {
 		</div>
 		</div>
 	);
+	}
 }
 
 export default Main;

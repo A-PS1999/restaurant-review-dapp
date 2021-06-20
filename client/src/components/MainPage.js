@@ -39,7 +39,7 @@ class Main extends Component {
 				<br></br>
 				<h1>Search reviews by restaurant name</h1>
 				<br></br>
-				<input type="text" class="form-control" value={this.state.search} onChange={this.updateSearch.bind(this)} />
+				<input type="text" className="form-control" value={this.state.search} onChange={this.updateSearch.bind(this)} />
 				<p></p>
 				{ filteredReviews.map((review, key) => {
 					return(
@@ -48,8 +48,8 @@ class Main extends Component {
 								<p>{review.cuisineType}</p>
 								<br></br>
 								<h2>{review.restaurantName}</h2>
-								<p class="small">Author: {review.author}</p>
-								<p class="small">Reviewed on {review.reviewDate}</p>
+								<p className="small">Author: {review.author}</p>
+								<p className="small">Reviewed on {review.reviewDate}</p>
 							</div>
 							<p>Rating: {review.rating.toString()} / 5</p>
 							<ul id="reviewList" className="list-group list-group-flush">

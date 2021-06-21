@@ -37,6 +37,7 @@ class App extends Component {
 		account: null,
 		instance: null,
 		reviewCount: 0,
+		starRating: 0,
 		reviews: [],
 		ipfsHash: '',
 		isLoading: true

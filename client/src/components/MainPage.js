@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { useToasts } from 'react-toast-notifications';
+import ReactStars from "react-rating-stars-component";
 	
 function useTipToast() {
   const { addToast } = useToasts();
@@ -51,7 +52,7 @@ class Main extends Component {
 								<p className="small">Author: {review.author}</p>
 								<p className="small">Reviewed on {review.reviewDate}</p>
 							</div>
-							<p>Rating: {review.rating.toString()} / 5</p>
+							<p>Rating:</p> <ReactStars edit="false" value={review.rating} />
 							<ul id="reviewList" className="list-group list-group-flush">
 								<li className="list-group-item">
 									<p>{review.reviewBody}</p>

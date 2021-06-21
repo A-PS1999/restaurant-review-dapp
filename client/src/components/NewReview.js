@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import ipfs from '../utils/ipfs';
 import { useToasts } from 'react-toast-notifications';
+import ReactStars from 'react-rating-stars-component';
 
 function useSentToast() {
   const { addToast } = useToasts();
@@ -17,9 +18,21 @@ function useSentToast() {
   }
 };
 
+const ratingToState = (newRating) => {
+	this.setState({
+		starRating: newRating
+	})
+}
+
+const ratingStars = {
+	isHalf: false,
+	size: 60,
+	onChange: {ratingToState}
+}
+
 class NewReview extends Component {
 	
-	captureFile(event) {
+	captureFile = (event) => {
 		event.preventDefault()
 		const file = event.target.files[0]
 		const reader = new window.FileReader()
@@ -54,7 +67,7 @@ class NewReview extends Component {
 							<Form onSubmit={(event) => {
 								try {
 									event.preventDefault()
-									const rating = this.ratingInput.value
+									const rating = this.state.starRating
 									const restaurantName = this.nameInput.value
 									const cuisineType = this.cuisInput.value
 									const reviewBody = this.reviewInput.value
@@ -91,13 +104,8 @@ class NewReview extends Component {
 								</Form.Group>
 								<br/>
 								<Form.Group>
-									<Form.Control
-									id="rating"
-									type="text"
-									ref={(input) => {this.ratingInput = input}}
-									className="form-control"
-									placeholder="Your rating out of 5"
-									required />
+									<h4>Rating</h4>
+									<ReactStars {...ratingStars} />
 								</Form.Group>
 								<br/>
 								<Form.Group>

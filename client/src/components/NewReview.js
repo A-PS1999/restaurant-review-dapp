@@ -18,19 +18,13 @@ function useSentToast() {
   }
 };
 
-const ratingToState = (newRating) => {
-	this.setState({
-		starRating: newRating
-	})
-}
-
-const ratingStars = {
-	isHalf: false,
-	size: 60,
-	onChange: {ratingToState}
-}
-
 class NewReview extends Component {
+	
+	ratingToState = newValue => {
+		this.setState({
+			starRating: newValue
+		})
+	};
 	
 	captureFile = (event) => {
 		event.preventDefault()
@@ -55,6 +49,12 @@ class NewReview extends Component {
 			this.instance.set(result[0].hash, { from: this.state.account})
 			this.setState({ ipfsHash: result[0].hash })
 		})
+	}
+	
+	constructor(props) {
+		super(props)
+		this.captureFile = this.captureFile.bind(this)
+		this.getHash = this.getHash.bind(this)
 	}
 	
 	render() {
@@ -105,7 +105,7 @@ class NewReview extends Component {
 								<br/>
 								<Form.Group>
 									<h4>Rating</h4>
-									<ReactStars {...ratingStars} />
+									<Rating onChange={this.ratingToState} />
 								</Form.Group>
 								<br/>
 								<Form.Group>
@@ -137,5 +137,9 @@ class NewReview extends Component {
 		);
 	}
 }
+
+const Rating = ({ratingToState}) => (
+	<ReactStars size={60} onChange={ratingToState} />
+)
 
 export default NewReview;

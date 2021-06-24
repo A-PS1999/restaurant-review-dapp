@@ -20,13 +20,13 @@ function useSentToast() {
 
 class NewReview extends Component {
 	
-	ratingToState = newValue => {
+	ratingToState = (newRating) => {
 		this.setState({
-			starRating: newValue
-		})
+			starRating: newRating
+		});
 	};
 	
-	captureFile = (event) => {
+	captureFile(event) {
 		event.preventDefault()
 		const file = event.target.files[0]
 		const reader = new window.FileReader()
@@ -39,22 +39,25 @@ class NewReview extends Component {
 		}
 	}
 	
-	getHash(event) {
-		event.preventDefault()
+	getHash(event, callback) {
+		if (arguments.length > 0) event.preventDefault()
 		ipfs.files.add(this.state.buffer, (error, result) => {
 			if(error) {
 				console.log(error);
 				return
 			}
-			this.instance.set(result[0].hash, { from: this.state.account})
-			this.setState({ ipfsHash: result[0].hash })
+			this.setState({ ipfsHash: result[0].hash }, callback)
 		})
 	}
 	
-	constructor(props) {
+		constructor(props) {
 		super(props)
+		this.state = {
+			ipfsHash: '',
+		};
 		this.captureFile = this.captureFile.bind(this)
 		this.getHash = this.getHash.bind(this)
+		this.ratingToState = this.ratingToState.bind(this)
 	}
 	
 	render() {
@@ -71,9 +74,7 @@ class NewReview extends Component {
 									const restaurantName = this.nameInput.value
 									const cuisineType = this.cuisInput.value
 									const reviewBody = this.reviewInput.value
-									this.getHash()
-									const ipfsHash = this.state.ipfsHash
-									this.props.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash)
+									this.getHash(event, this.props.addReview(rating, restaurantName, cuisineType, reviewBody, this.state.ipfsHash))
 									useSentToast()
 								} catch(e) {
 									console.error(e)
@@ -119,6 +120,7 @@ class NewReview extends Component {
 								</Form.Group>
 								<br/>
 								<Form.Group>
+									<img src={`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=""/>
 									<Form.File
 									id="toIpfs"
 									label="Upload a supporting image"

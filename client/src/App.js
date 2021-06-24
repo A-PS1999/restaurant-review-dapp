@@ -14,7 +14,7 @@ class App extends Component {
 	
   addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash) {
     this.setState({ isLoading: true })
-	this.state.contract.methods.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash).send({
+	this.state.instance.methods.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash).send({
 		from: this.state.account }).once('confirmation', (n, receipt) => {
 			this.setState({ isLoading: false })
 			window.location.reload()
@@ -23,7 +23,7 @@ class App extends Component {
 	
   tipReview(id, tipValue) {
 	this.setState({ isLoading: true })
-	this.state.contract.methods.tipReview(id).send({ from: this.state.account, value: tipValue }).once(
+	this.state.instance.methods.tipReview(id).send({ from: this.state.account, value: tipValue }).once(
 	'confirmation', (n, receipt) => {
 		this.setState({ isLoading: false })
 		window.location.reload()
@@ -37,9 +37,7 @@ class App extends Component {
 		account: null,
 		instance: null,
 		reviewCount: 0,
-		starRating: 0,
 		reviews: [],
-		ipfsHash: '',
 		isLoading: true
 	};
 	this.addReview = this.addReview.bind(this)

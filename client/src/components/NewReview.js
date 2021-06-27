@@ -21,9 +21,7 @@ function useSentToast() {
 class NewReview extends Component {
 	
 	ratingToState = (newRating) => {
-		this.setState({
-			starRating: newRating
-		});
+		console.log(newRating)
 	};
 	
 	captureFile(event) {
@@ -50,7 +48,7 @@ class NewReview extends Component {
 		})
 	}
 	
-		constructor(props) {
+	constructor(props) {
 		super(props)
 		this.state = {
 			ipfsHash: '',

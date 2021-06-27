@@ -1,20 +1,25 @@
 import Web3 from "web3";
 
+let currentAccount = null
+
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
       // Modern dapp browsers...
       if (window.ethereum) {
-        const web3 = new Web3(window.ethereum);
-        try {
-          // Request account access if needed
-          await window.ethereum.enable();
-          // Acccounts now exposed
-          resolve(web3);
-        } catch (error) {
-          reject(error);
-        }
+		const web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+		if (accounts.length === 0) {
+			console.log("Please connect to MetaMask.")
+		} else if (accounts[0] !== currentAccount) {
+			currentAccount = accounts[0];
+			resolve(web3);
+		}
+		window.ethereum.on('accountsChanged', function (accounts) {
+			currentAccount = accounts[0]
+			resolve(web3);
+		});
       }
       // Legacy dapp browsers...
       else if (window.web3) {

@@ -74,6 +74,7 @@ class App extends Component {
 			})
 		  }
 		this.setState({ isLoading: false })
+		web3.eth.handleRevert = true;
 	  } else {
 		window.alert("The contract could not be deployed to a network.")
 	  }
@@ -97,7 +98,7 @@ class App extends Component {
 				{
 					this.state.loading
 					? <center><div className="loader"></div></center>
-					: <NewReview addReview={this.addReview} />
+					: <NewReview addReview={this.addReview} web3={this.state.web3} />
 				}
 				</React.Fragment>
 			)} />
@@ -106,7 +107,7 @@ class App extends Component {
 				{
 					this.state.loading
 					? <center><div className="loader"></div></center>
-					: <Main reviews={this.state.reviews} tipReview={this.tipReview} />
+					: <Main reviews={this.state.reviews} tipReview={this.tipReview} web3={this.state.web3} />
 				}
 				</React.Fragment>
 			)} />

@@ -3,26 +3,8 @@ import { Form } from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import ipfs from '../utils/ipfs';
-import { useToasts } from 'react-toast-notifications';
-import ReactStars from 'react-rating-stars-component';
-
-function useSentToast() {
-  const { addToast } = useToasts();
-  
-  let sentEvent = this.instance.events.reviewSubmitted();
-  try {
-	addToast('Your review of ' + sentEvent.returnValues['name'] + ' has been submitted as ' +
-	sentEvent.returnValues['rNo'], { appearance: 'success' });
-  } catch(e) {
-	addToast("An error occurred", { appearance: 'error' })  
-  }
-};
 
 class NewReview extends Component {
-	
-	ratingToState = (newRating) => {
-		console.log(newRating)
-	};
 	
 	captureFile(event) {
 		event.preventDefault()
@@ -55,7 +37,6 @@ class NewReview extends Component {
 		};
 		this.captureFile = this.captureFile.bind(this)
 		this.getHash = this.getHash.bind(this)
-		this.ratingToState = this.ratingToState.bind(this)
 	}
 	
 	render() {
@@ -68,12 +49,11 @@ class NewReview extends Component {
 							<Form onSubmit={(event) => {
 								try {
 									event.preventDefault()
-									const rating = this.state.starRating
-									const restaurantName = this.nameInput.value
-									const cuisineType = this.cuisInput.value
+									const rating = this.ratingInput.value
+									const restaurantName = this.props.web3.utils.toHex(this.nameInput.value)
+									const cuisineType = this.props.web3.utils.toHex(this.cuisInput.value)
 									const reviewBody = this.reviewInput.value
 									this.getHash(event, this.props.addReview(rating, restaurantName, cuisineType, reviewBody, this.state.ipfsHash))
-									useSentToast()
 								} catch(e) {
 									console.error(e)
 								}
@@ -103,8 +83,13 @@ class NewReview extends Component {
 								</Form.Group>
 								<br/>
 								<Form.Group>
-									<h4>Rating</h4>
-									<Rating onChange={this.ratingToState} />
+									<Form.Control
+									id="reviewRating"
+									type="text"
+									ref={(input) => {this.ratingInput = input}}
+									className="form-control"
+									placeholder="Your rating out of 5"
+									required />
 								</Form.Group>
 								<br/>
 								<Form.Group>
@@ -137,9 +122,5 @@ class NewReview extends Component {
 		);
 	}
 }
-
-const Rating = ({ratingToState}) => (
-	<ReactStars size={60} onChange={ratingToState} />
-)
 
 export default NewReview;

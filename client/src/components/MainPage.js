@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
 import { useToasts } from 'react-toast-notifications';
 import ReactStars from "react-rating-stars-component";
+
+function convertUnixTimestamp(timestamp) {
 	
-function useTipToast() {
-  const { addToast } = useToasts();
-  
-  let tipEvent = this.instance.events.tipSent();
-  try {
-	addToast('Your review of ' + tipEvent.returnValues['name'] + ' has been submitted as ' +
-	tipEvent.returnValues['rNo'], { appearance: 'success' });
-  } catch(e) {
-	addToast("An error occurred", { appearance: 'error' })  
-  }
-};
+	var months_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+	
+	var date = new Date(timestamp*1000);
+	
+	var year = date.getFullYear();
+	
+	var month = months_list[date.getMonth()];
+	
+	var day = date.getDate();
+	
+	var convertedDate = month + ' ' + day + ' ' + year;
+	
+	return convertedDate
+}
 
 class Main extends Component {
 	constructor() {
@@ -46,13 +51,13 @@ class Main extends Component {
 					return(
 						<div key={key} >
 							<div>
-								<p>{review.cuisineType}</p>
-								<br></br>
-								<h2>{review.restaurantName}</h2>
+								<h2>{this.props.web3.utils.hexToUtf8(review.restaurantName)}</h2>
+								<p>{this.props.web3.utils.hexToUtf8(review.cuisineType)}</p>
 								<p className="small">Author: {review.author}</p>
-								<p className="small">Reviewed on {review.reviewDate}</p>
+								<p className="small">Reviewed on {convertUnixTimestamp(review.reviewDate)}</p>
 							</div>
-							<p>Rating:</p> <ReactStars edit="false" value={review.rating} />
+							<p>Rating:</p>
+							<ReactStars size={50} edit={false} value={Number(review.rating)} />
 							<ul id="reviewList" className="list-group list-group-flush">
 								<li className="list-group-item">
 									<p>{review.reviewBody}</p>
@@ -75,8 +80,6 @@ class Main extends Component {
 											try {
 												let tipValue = window.web3.utils.toWei('0.1', 'Ether')
 											this.props.tipReview(event.target.name, tipValue)
-											
-											useTipToast()
 											} catch(e) {
 												console.error(e)
 											}

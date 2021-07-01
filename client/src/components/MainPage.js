@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { useToasts } from 'react-toast-notifications';
 import ReactStars from "react-rating-stars-component";
 
 function convertUnixTimestamp(timestamp) {
@@ -20,6 +19,11 @@ function convertUnixTimestamp(timestamp) {
 }
 
 class Main extends Component {
+	
+	updateSearch(event) {
+		this.setState({search: event.target.value.substr(0, 20)});
+	}
+	
 	constructor() {
 		super();
 		this.state = {
@@ -27,16 +31,12 @@ class Main extends Component {
 		};
 	}
 	
-	updateSearch(event) {
-		this.setState({search: event.target.value.substr(0, 20)});
-	}
-	
 	render() {
 		let filteredReviews = this.props.reviews.filter(
 		(review) => {
 			return review.restaurantName.indexOf(this.state.search) !== -1;
 		});
-	
+
 	return (
 		<div className="container-fluid mt-5">
 		<div className="row">
@@ -63,12 +63,15 @@ class Main extends Component {
 									<p>{review.reviewBody}</p>
 									<br></br>
 								</li>
-								<li className="list-group-item">
+								{ review.ipfsHash 
+								? <li className="list-group-item">
 									<p>Review Image</p>
-									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } alt="" />
-								</li>
+									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } onError={this.addPlaceholder} alt="" />
+								  </li> 
+								: null
+								}
 								<li key={key} className="list-group-item py-2">
-									<p className="float-left mt-1 text-muted small">
+									<p className="mt-1 text-muted small">
 										{review.tipCount.toString()} user(s) tipped this review.
 									</p>
 									<br></br>
@@ -78,8 +81,8 @@ class Main extends Component {
 										name={review.id}
 										onClick={(event) => {
 											try {
-												let tipValue = window.web3.utils.toWei('0.1', 'Ether')
-											this.props.tipReview(event.target.name, tipValue)
+												let tipValue = this.props.web3.utils.toWei('0.1', 'Ether')
+												this.props.tipReview(event.target.name, tipValue)
 											} catch(e) {
 												console.error(e)
 											}
@@ -87,6 +90,7 @@ class Main extends Component {
 										Tip
 									</button>
 								</li>
+								<hr></hr>
 							</ul>
 						</div>
 					)

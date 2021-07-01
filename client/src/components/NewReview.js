@@ -6,7 +6,7 @@ import ipfs from '../utils/ipfs';
 
 class NewReview extends Component {
 	
-	captureFile(event) {
+	captureFile = (event) => {
 		event.preventDefault()
 		const file = event.target.files[0]
 		const reader = new window.FileReader()
@@ -19,14 +19,13 @@ class NewReview extends Component {
 		}
 	}
 	
-	getHash(event, callback) {
-		if (arguments.length > 0) event.preventDefault()
+	getHash(callback) {
 		ipfs.files.add(this.state.buffer, (error, result) => {
 			if(error) {
 				console.log(error);
 				return
 			}
-			this.setState({ ipfsHash: result[0].hash }, callback)
+			this.setState({ ipfsHash: result[0].hash })
 		})
 	}
 	
@@ -53,7 +52,8 @@ class NewReview extends Component {
 									const restaurantName = this.props.web3.utils.toHex(this.nameInput.value)
 									const cuisineType = this.props.web3.utils.toHex(this.cuisInput.value)
 									const reviewBody = this.reviewInput.value
-									this.getHash(event, this.props.addReview(rating, restaurantName, cuisineType, reviewBody, this.state.ipfsHash))
+									const ipfsHash = this.state.ipfsHash
+									this.props.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash)
 								} catch(e) {
 									console.error(e)
 								}
@@ -103,7 +103,7 @@ class NewReview extends Component {
 								</Form.Group>
 								<br/>
 								<Form.Group>
-									<img src={`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=""/>
+									<img src={this.state.file} alt=""/>
 									<Form.File
 									id="toIpfs"
 									label="Upload a supporting image"

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ToastProvider } from 'react-toast-notifications';
 import restaurantReviewer from "./contracts/restaurantReviewer.json";
 import getWeb3 from "./utils/getWeb3.js";
 import Navbar from './components/Navbar.js'
@@ -89,7 +88,6 @@ class App extends Component {
 	}
 	return (
 		<div>
-			<ToastProvider>
 			<Router>
 			<Navbar />
 			<Route exact path="/" component={FrontPage} />
@@ -113,7 +111,6 @@ class App extends Component {
 			)} />
 			<PageFooter />
 			</Router>
-			</ToastProvider>
 		</div>
 		);
 	}

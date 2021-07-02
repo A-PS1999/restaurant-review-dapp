@@ -1,126 +1,139 @@
-import React, { Component } from 'react';
-import { Form } from 'react-bootstrap';
-import { Container } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Form, Container, Row } from "react-bootstrap";
+import { useForm, Controller, handleSubmit } from "react-hook-form";
 import ipfs from '../utils/ipfs';
 
-class NewReview extends Component {
+export default function NewReview({addReview, web3}) {
 	
-	captureFile = (event) => {
-		event.preventDefault()
-		const file = event.target.files[0]
-		const reader = new window.FileReader()
-		reader.readAsArrayBuffer(file)
-		reader.onloadend = () => {
-			this.setState({
-				buffer: Buffer(reader.result),
-				file: URL.createObjectURL(file),
+	const { handleSubmit, control } = useForm();
+	
+	const [isFile, setFile] = useState(null);
+	const [ipfsHash, setIpfsHash] = useState("");
+	const [buffer, setBuffer] = useState(null);
+	
+	const captureFile = (event) => {
+		if (event.target.files[0]) {
+			event.preventDefault();
+			setFile(URL.createObjectURL(event.target.files[0]));
+			
+			const reader = new FileReader();
+			reader.readAsArrayBuffer(event.target.files[0])
+			reader.addEventListener("load", () => {
+					setBuffer(reader.result)
 			})
 		}
 	}
 	
-	getHash(callback) {
-		ipfs.files.add(this.state.buffer, (error, result) => {
-			if(error) {
+	function getHash() {
+		ipfs.files.add(buffer, (error, result) => {
+			if (error) {
 				console.log(error);
 				return
 			}
-			this.setState({ ipfsHash: result[0].hash })
-		})
+			setIpfsHash(result[0].hash);
+	});
 	}
 	
-	constructor(props) {
-		super(props)
-		this.state = {
-			ipfsHash: '',
-		};
-		this.captureFile = this.captureFile.bind(this)
-		this.getHash = this.getHash.bind(this)
+	function submitData(data, e) {
+		try {
+			e.preventDefault();
+			getHash();
+			addReview(data.reviewRating, data.restaurantName, data.cuisineType, data.reviewBody, ipfsHash);
+		} catch (e) {
+			console.error(e);
+		}
 	}
-	
-	render() {
-		return (
-			<div className="container-fluid mt-5">
-			<div className="row">
-				<main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '500px' }}>
-					<Container className="content mr-auto ml-auto">
-						<Row className="justify-content-md-center">
-							<Form onSubmit={(event) => {
-								try {
-									event.preventDefault()
-									const rating = this.ratingInput.value
-									const restaurantName = this.props.web3.utils.toHex(this.nameInput.value)
-									const cuisineType = this.props.web3.utils.toHex(this.cuisInput.value)
-									const reviewBody = this.reviewInput.value
-									const ipfsHash = this.state.ipfsHash
-									this.props.addReview(rating, restaurantName, cuisineType, reviewBody, ipfsHash)
-								} catch(e) {
-									console.error(e)
-								}
-							}}>
-							<center>
-							<h1>Your review:</h1>
-							<br></br>
-							<div className="form-container">
-								<Form.Group>
-									<Form.Control
-									id="restaurantName"
-									type="text"
-									ref={(input) => {this.nameInput = input}}
-									className="form-control"
-									placeholder="Restaurant Name"
-									required />
-								</Form.Group>
-								<br/>
-								<Form.Group>
-									<Form.Control
-									id="cuisineType"
-									type="text"
-									ref={(input) => {this.cuisInput = input}}
-									className="form-control"
-									placeholder="Cuisine Type"
-									required />
-								</Form.Group>
-								<br/>
-								<Form.Group>
-									<Form.Control
-									id="reviewRating"
-									type="text"
-									ref={(input) => {this.ratingInput = input}}
-									className="form-control"
-									placeholder="Your rating out of 5"
-									required />
-								</Form.Group>
-								<br/>
-								<Form.Group>
-									<h4>Share your experience!</h4>
-									<Form.Control
-									id="reviewBody"
-									as="textarea"
-									rows={5}
-									ref={(input) => {this.reviewInput = input}}
-									required />
-								</Form.Group>
-								<br/>
-								<Form.Group>
-									<img src={this.state.file} alt=""/>
-									<Form.File
-									id="toIpfs"
-									label="Upload a supporting image"
-									onChange={this.captureFile} />
-								</Form.Group>
-							</div>
-							<br/>
-							<button type="submit" className="btn btn-outline-info">Submit</button>
-							</center>
-							</Form>
-						</Row>
-					</Container>
-				</main>
-			</div>
-		    </div>
-		);
-	}
-}
 
-export default NewReview;
+	return (
+		<div className="container-fluid mt-5">
+		<div className="row">
+			<main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '500px' }}>
+				<Container className="content mr-auto ml-auto">
+					<Row className="justify-content-md-center">
+						<Form onSubmit={handleSubmit(submitData)}>
+						<center>
+						<h1>Your review:</h1>
+						<br></br>
+						<div className="form-container">
+							<Controller
+                                name="restaurantName"
+								control={control}
+								defaultValue=""
+								render={({ field }) => (
+									<Form.Control
+										{...field}
+										onChange={(e) => field.onChange(web3.utils.toHex(e.target.value))}
+										className="form-control"
+										placeholder="Restaurant Name"
+										required
+									/>
+								)}
+							/>
+							<br/>
+							<Controller
+								name="cuisineType"
+								control={control}
+								defaultValue=""
+								rules={{ required: true }}
+								render={({ field }) => (
+									<Form.Control
+										{...field}
+										onChange={(e) => field.onChange(web3.utils.toHex(e.target.value))}
+										className="form-control"
+										placeholder="Cuisine Type"
+										required 
+									/>
+								)}
+							/>
+							<br/>
+							<Controller
+								name="reviewRating"
+								control={control}
+								rules={{ max: 5, min: 1, required: true }}
+								render={({ field }) => (
+									<Form.Control
+										{...field}
+										onChange={(e) => field.onChange(Number(e.target.value))}
+										className="form-control"
+										placeholder="Your rating out of 5" 
+									/>
+								)}
+							/>
+							<br/>
+							<h4>Share your experience!</h4>
+							<Controller
+								name="reviewBody"
+								control={control}
+								rules={{ required: true }}
+								render={({ field }) => (
+									<Form.Control
+										{...field}
+										as="textarea"
+										rows={5}
+										onChange={(e) => field.onChange(e.target.value)}
+									/>
+								)}
+							/>
+							<br/>
+							<Controller
+								name="imgUpload"
+								control={control}
+								render={({ field }) => (
+									<div>
+										<img src={isFile} alt="" />
+										<input type="file" onChange={captureFile} />
+									</div>
+								)}
+							/>
+						</div>
+						<br/>
+						<button type="submit" className="btn btn-outline-info">Submit</button>
+						</center>
+						</Form>
+					</Row>
+				</Container>
+			</main>
+		</div>
+		</div>
+	);
+}

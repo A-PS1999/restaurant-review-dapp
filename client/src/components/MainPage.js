@@ -66,7 +66,7 @@ class Main extends Component {
 								{ review.ipfsHash 
 								? <li className="list-group-item">
 									<p>Review Image</p>
-									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } onError={this.addPlaceholder} alt="" />
+									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } alt="" />
 								  </li> 
 								: null
 								}

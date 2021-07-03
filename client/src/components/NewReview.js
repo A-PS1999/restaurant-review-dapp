@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Container, Row } from "react-bootstrap";
 import { useForm, Controller, handleSubmit } from "react-hook-form";
 import ipfs from '../utils/ipfs';
@@ -7,9 +7,25 @@ export default function NewReview({addReview, web3}) {
 	
 	const { handleSubmit, control } = useForm();
 	
-	const [isFile, setFile] = useState(null);
 	const [ipfsHash, setIpfsHash] = useState("");
+	const [isFile, setFile] = useState(null);
 	const [buffer, setBuffer] = useState(null);
+	
+	function getHash() {
+		ipfs.files.add(Buffer.from(buffer), (error, result) => {
+			if (error) {
+				console.log(error);
+				return
+			}
+			setIpfsHash(result[0].hash);
+	});
+	}
+	
+	useEffect(() => {
+		if (buffer) {
+			getHash()
+		}
+	});
 	
 	const captureFile = (event) => {
 		if (event.target.files[0]) {
@@ -24,21 +40,11 @@ export default function NewReview({addReview, web3}) {
 		}
 	}
 	
-	function getHash() {
-		ipfs.files.add(buffer, (error, result) => {
-			if (error) {
-				console.log(error);
-				return
-			}
-			setIpfsHash(result[0].hash);
-	});
-	}
-	
 	function submitData(data, e) {
 		try {
 			e.preventDefault();
 			getHash();
-			addReview(data.reviewRating, data.restaurantName, data.cuisineType, data.reviewBody, ipfsHash);
+			addReview(Number(data.reviewRating), web3.utils.toHex(data.restaurantName), web3.utils.toHex(data.cuisineType), data.reviewBody, ipfsHash);
 		} catch (e) {
 			console.error(e);
 		}
@@ -62,7 +68,7 @@ export default function NewReview({addReview, web3}) {
 								render={({ field }) => (
 									<Form.Control
 										{...field}
-										onChange={(e) => field.onChange(web3.utils.toHex(e.target.value))}
+										onChange={(e) => field.onChange(e.target.value)}
 										className="form-control"
 										placeholder="Restaurant Name"
 										required
@@ -78,7 +84,7 @@ export default function NewReview({addReview, web3}) {
 								render={({ field }) => (
 									<Form.Control
 										{...field}
-										onChange={(e) => field.onChange(web3.utils.toHex(e.target.value))}
+										onChange={(e) => field.onChange(e.target.value)}
 										className="form-control"
 										placeholder="Cuisine Type"
 										required 
@@ -93,7 +99,7 @@ export default function NewReview({addReview, web3}) {
 								render={({ field }) => (
 									<Form.Control
 										{...field}
-										onChange={(e) => field.onChange(Number(e.target.value))}
+										onChange={(e) => field.onChange(e.target.value)}
 										className="form-control"
 										placeholder="Your rating out of 5" 
 									/>

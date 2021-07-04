@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Form, Container, Row } from "react-bootstrap";
 import { useForm, Controller, handleSubmit } from "react-hook-form";
+import { useToasts } from 'react-toast-notifications';
 import ipfs from '../utils/ipfs';
 
-export default function NewReview({addReview, web3}) {
+export default function NewReview({addReview, web3, contract}) {
 	
 	const { handleSubmit, control } = useForm();
+	const { addToast } = useToasts();
 	
 	const [ipfsHash, setIpfsHash] = useState("");
 	const [isFile, setFile] = useState(null);
@@ -14,7 +16,8 @@ export default function NewReview({addReview, web3}) {
 	function getHash() {
 		ipfs.files.add(Buffer.from(buffer), (error, result) => {
 			if (error) {
-				console.log(error);
+				console.error(error)
+				addToast(error.message, { appearance: 'error' });
 				return
 			}
 			setIpfsHash(result[0].hash);
@@ -43,12 +46,18 @@ export default function NewReview({addReview, web3}) {
 	function submitData(data, e) {
 		try {
 			e.preventDefault();
-			getHash();
+			if (buffer) {
+				getHash();
+			}
 			addReview(Number(data.reviewRating), web3.utils.toHex(data.restaurantName), web3.utils.toHex(data.cuisineType), data.reviewBody, ipfsHash);
 		} catch (e) {
 			console.error(e);
+			addToast(e.message, { appearance: 'error' });
 		}
 	}
+	
+	contract.events.reviewSubmitted({}).on('data', function(response) {addToast('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
+	' has been successfully submitted to the dapp!')});
 
 	return (
 		<div className="container-fluid mt-5">

@@ -1,41 +1,36 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import ReactStars from "react-rating-stars-component";
 
-function convertUnixTimestamp(timestamp) {
+export default function Main(reviews, tipReview, web3) {
 	
-	var months_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+	const [search, setSearch] = useState("");
 	
-	var date = new Date(timestamp*1000);
-	
-	var year = date.getFullYear();
-	
-	var month = months_list[date.getMonth()];
-	
-	var day = date.getDate();
-	
-	var convertedDate = month + ' ' + day + ' ' + year;
-	
-	return convertedDate
-}
-
-class Main extends Component {
-	
-	updateSearch(event) {
-		this.setState({search: event.target.value.substr(0, 20)});
+	const updateSearch = (event) => {
+		setSearch(event.target.value.substr(0, 20));
 	}
 	
-	constructor() {
-		super();
-		this.state = {
-			search: ''
-		};
-	}
-	
-	render() {
-		let filteredReviews = this.props.reviews.filter(
+	let filteredReviews = reviews.filter(
 		(review) => {
-			return review.restaurantName.indexOf(this.state.search) !== -1;
-		});
+			return review.restaurantName.indexOf(search) !== -1;
+	});
+	
+	function convertUnixTimestamp(timestamp) {
+	
+		var months_list = ['January','February','March','April','May','June',
+		'July','August','September','October','November','December'];
+		
+		var date = new Date(timestamp*1000);
+		
+		var year = date.getFullYear();
+		
+		var month = months_list[date.getMonth()];
+		
+		var day = date.getDate();
+		
+		var convertedDate = month + ' ' + day + ' ' + year;
+		
+		return convertedDate
+	}
 
 	return (
 		<div className="container-fluid mt-5">
@@ -45,14 +40,14 @@ class Main extends Component {
 				<br></br>
 				<h1>Search reviews by restaurant name</h1>
 				<br></br>
-				<input type="text" className="form-control" value={this.state.search} onChange={this.updateSearch.bind(this)} />
+				<input type="text" className="form-control" value={search} onChange={updateSearch} />
 				<p></p>
 				{ filteredReviews.map((review, key) => {
 					return(
 						<div key={key} >
 							<div>
-								<h2>{this.props.web3.utils.hexToUtf8(review.restaurantName)}</h2>
-								<p>{this.props.web3.utils.hexToUtf8(review.cuisineType)}</p>
+								<h2>{web3.utils.hexToUtf8(review.restaurantName)}</h2>
+								<p>{web3.utils.hexToUtf8(review.cuisineType)}</p>
 								<p className="small">Author: {review.author}</p>
 								<p className="small">Reviewed on {convertUnixTimestamp(review.reviewDate)}</p>
 							</div>
@@ -81,8 +76,8 @@ class Main extends Component {
 										name={review.id}
 										onClick={(event) => {
 											try {
-												let tipValue = this.props.web3.utils.toWei('0.1', 'Ether')
-												this.props.tipReview(event.target.name, tipValue)
+												let tipValue = web3.utils.toWei('0.1', 'Ether')
+												tipReview(event.target.name, tipValue)
 											} catch(e) {
 												console.error(e)
 											}
@@ -100,7 +95,4 @@ class Main extends Component {
 		</div>
 		</div>
 	);
-	}
 }
-
-export default Main;

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { ToastProvider } from 'react-toast-notifications';
 import restaurantReviewer from "./contracts/restaurantReviewer.json";
 import getWeb3 from "./utils/getWeb3.js";
 import Navbar from './components/Navbar.js'
@@ -87,31 +88,33 @@ class App extends Component {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	}
 	return (
-		<div>
-			<Router>
-			<Navbar />
-			<Route exact path="/" component={FrontPage} />
-			<Route exact path="/newreview" render={props => (
-				<React.Fragment>
-				{
-					this.state.loading
-					? <center><div className="loader"></div></center>
-					: <NewReview addReview={this.addReview} web3={this.state.web3} />
-				}
-				</React.Fragment>
-			)} />
-			<Route exact path="/reviews" render={props => (
-				<React.Fragment>
-				{
-					this.state.loading
-					? <center><div className="loader"></div></center>
-					: <Main reviews={this.state.reviews} tipReview={this.tipReview} web3={this.state.web3} />
-				}
-				</React.Fragment>
-			)} />
-			<PageFooter />
-			</Router>
-		</div>
+		<ToastProvider>
+			<div>
+				<Router>
+				<Navbar />
+				<Route exact path="/" component={FrontPage} />
+				<Route exact path="/newreview" render={props => (
+					<React.Fragment>
+					{
+						this.state.loading
+						? <center><div className="loader"></div></center>
+						: <NewReview addReview={this.addReview} web3={this.state.web3} contract={this.state.instance} />
+					}
+					</React.Fragment>
+				)} />
+				<Route exact path="/reviews" render={props => (
+					<React.Fragment>
+					{
+						this.state.loading
+						? <center><div className="loader"></div></center>
+						: <Main reviews={this.state.reviews} tipReview={this.tipReview} web3={this.state.web3} />
+					}
+					</React.Fragment>
+				)} />
+				<PageFooter />
+				</Router>	
+			</div>
+		</ToastProvider>
 		);
 	}
 }

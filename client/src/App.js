@@ -107,7 +107,7 @@ class App extends Component {
 					{
 						this.state.loading
 						? <center><div className="loader"></div></center>
-						: <Main reviews={this.state.reviews} tipReview={this.tipReview} web3={this.state.web3} />
+						: <Main reviews={this.state.reviews} tipReview={this.tipReview} web3={this.state.web3} contract={this.state.instance} />
 					}
 					</React.Fragment>
 				)} />

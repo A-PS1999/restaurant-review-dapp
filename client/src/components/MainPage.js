@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 import ReactStars from "react-rating-stars-component";
 
-export default function Main(reviews, tipReview, web3) {
+export default function Main({reviews, tipReview, web3, contract}) {
 	
 	const [search, setSearch] = useState("");
+	const { addToast } = useToasts();
 	
 	const updateSearch = (event) => {
 		setSearch(event.target.value.substr(0, 20));
@@ -11,7 +13,7 @@ export default function Main(reviews, tipReview, web3) {
 	
 	let filteredReviews = reviews.filter(
 		(review) => {
-			return review.restaurantName.indexOf(search) !== -1;
+			return review.restaurantName.indexOf(web3.utils.toHex(search)) !== -1;
 	});
 	
 	function convertUnixTimestamp(timestamp) {
@@ -31,6 +33,9 @@ export default function Main(reviews, tipReview, web3) {
 		
 		return convertedDate
 	}
+	
+	contract.events.tipSent({}).on('data', function(response) {addToast("Your  tip of " + web3.utils.fromWei(response.returnValues['_value']).toString() + 
+	" ETH has successfully been sent to the author of review #" + response.returnValues['rNo'].toString() + "!")})
 
 	return (
 		<div className="container-fluid mt-5">
@@ -80,6 +85,7 @@ export default function Main(reviews, tipReview, web3) {
 												tipReview(event.target.name, tipValue)
 											} catch(e) {
 												console.error(e)
+												addToast(e.message, { appearance: 'error' })
 											}
 									}}>
 										Tip

@@ -57,7 +57,7 @@ export default function NewReview({addReview, web3, contract}) {
 	}
 	
 	contract.events.reviewSubmitted({}).on('data', function(response) {addToast('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
-	' has been successfully submitted to the dapp!')});
+	' has been successfully submitted as review #' + response.returnValues['rNo'].toString() + '!')});
 
 	return (
 		<div className="container-fluid mt-5">

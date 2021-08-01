@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ToastProvider } from 'react-toast-notifications';
 import restaurantReviewer from "./contracts/restaurantReviewer.json";
+import { Toaster } from "react-hot-toast";
 import getWeb3 from "./utils/getWeb3.js";
 import Navbar from './components/Navbar.js'
 import PageFooter from './components/Footer.js'
@@ -53,6 +53,9 @@ class App extends Component {
       // Use web3 to get the user's account.
       const accounts = await web3.eth.getAccounts();
 	  this.setState({ account: accounts[0] })
+	  window.ethereum.on('accountsChanged', (accounts) => {
+		 this.setState({ account: accounts[0] }) 
+	  });
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -88,7 +91,6 @@ class App extends Component {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	}
 	return (
-		<ToastProvider>
 			<div>
 				<Router>
 				<Navbar />
@@ -113,8 +115,8 @@ class App extends Component {
 				)} />
 				<PageFooter />
 				</Router>	
+				<Toaster />
 			</div>
-		</ToastProvider>
 		);
 	}
 }

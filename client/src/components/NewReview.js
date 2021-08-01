@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
+import ReactStars from "react-rating-stars-component";
 import { Form, Container, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { useForm, Controller, handleSubmit } from "react-hook-form";
-import { useToasts } from 'react-toast-notifications';
 import ipfs from '../utils/ipfs';
 
 export default function NewReview({addReview, web3, contract}) {
 	
 	const { handleSubmit, control } = useForm();
-	const { addToast } = useToasts();
 	
 	const [ipfsHash, setIpfsHash] = useState("");
 	const [isFile, setFile] = useState(null);
 	const [buffer, setBuffer] = useState(null);
+	const [reviewRating, setReviewRating] = useState(1);
 	
 	function getHash() {
 		ipfs.files.add(Buffer.from(buffer), (error, result) => {
 			if (error) {
 				console.error(error)
-				addToast(error.message, { appearance: 'error' });
+				toast.error(error.message);
 				return
 			}
 			setIpfsHash(result[0].hash);
@@ -49,15 +50,17 @@ export default function NewReview({addReview, web3, contract}) {
 			if (buffer) {
 				getHash();
 			}
-			addReview(Number(data.reviewRating), web3.utils.toHex(data.restaurantName), web3.utils.toHex(data.cuisineType), data.reviewBody, ipfsHash);
+			addReview(reviewRating, web3.utils.toHex(data.restaurantName), web3.utils.toHex(data.cuisineType), data.reviewBody, ipfsHash);
 		} catch (e) {
 			console.error(e);
-			addToast(e.message, { appearance: 'error' });
+			toast.error(e.message);
 		}
 	}
 	
-	contract.events.reviewSubmitted({}).on('data', function(response) {addToast('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
+	if (contract) {
+		contract.events.reviewSubmitted({}).on('data', function(response) {toast.success('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
 	' has been successfully submitted as review #' + response.returnValues['rNo'].toString() + '!')});
+	}
 
 	return (
 		<div className="container-fluid mt-5">
@@ -101,19 +104,12 @@ export default function NewReview({addReview, web3, contract}) {
 								)}
 							/>
 							<br/>
-							<Controller
-								name="reviewRating"
-								control={control}
-								rules={{ max: 5, min: 1, required: true }}
-								render={({ field }) => (
-									<Form.Control
-										{...field}
-										onChange={(e) => field.onChange(e.target.value)}
-										className="form-control"
-										placeholder="Your rating out of 5" 
-									/>
-								)}
-							/>
+								<h4>Rating</h4>
+								<ReactStars 
+								size={60}
+								onChange={(rating) => {setReviewRating(rating)}}
+								isHalf={false}
+								/>
 							<br/>
 							<h4>Share your experience!</h4>
 							<Controller

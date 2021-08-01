@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useToasts } from 'react-toast-notifications';
+import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
 
 export default function Main({reviews, tipReview, web3, contract}) {
 	
 	const [search, setSearch] = useState("");
-	const { addToast } = useToasts();
 	
 	const updateSearch = (event) => {
 		setSearch(event.target.value.substr(0, 20));
@@ -34,8 +33,10 @@ export default function Main({reviews, tipReview, web3, contract}) {
 		return convertedDate
 	}
 	
-	contract.events.tipSent({}).on('data', function(response) {addToast("Your  tip of " + web3.utils.fromWei(response.returnValues['_value']).toString() + 
+	if (contract) {
+		contract.events.tipSent({}).on('data', function(response) {toast.success("Your  tip of " + web3.utils.fromWei(response.returnValues['_value']).toString() + 
 	" ETH has successfully been sent to the author of review #" + response.returnValues['rNo'].toString() + "!")})
+	}
 
 	return (
 		<div className="container-fluid mt-5">
@@ -72,7 +73,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 								}
 								<li key={key} className="list-group-item py-2">
 									<p className="mt-1 text-muted small">
-										{review.tipCount.toString()} user(s) tipped this review.
+										This review has been tipped {review.tipCount.toString()} time(s).
 									</p>
 									<br></br>
 									<p>If you found the review useful, would you like to tip 0.1 ETH to the author?</p>
@@ -85,7 +86,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 												tipReview(event.target.name, tipValue)
 											} catch(e) {
 												console.error(e)
-												addToast(e.message, { appearance: 'error' })
+												toast.error("An error occurred");
 											}
 									}}>
 										Tip

@@ -35,7 +35,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 	
 	if (contract) {
 		contract.events.tipSent({}).on('data', function(response) {toast.success("Your  tip of " + web3.utils.fromWei(response.returnValues['_value']).toString() + 
-	" ETH has successfully been sent to the author of review #" + response.returnValues['rNo'].toString() + "!")})
+	" ETH has successfully been sent to the author of review #" + response.returnValues['rNo'].toString() + "!", {id: 'tipSent'})})
 	}
 
 	return (

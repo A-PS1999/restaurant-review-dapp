@@ -39,7 +39,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 	}
 
 	return (
-		<div className="container-fluid mt-5">
+		<div className="container-fluid mt-5" style={{ minHeight: "100vh" }}>
 		<div className="row">
 			<main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '500px' }}>
 				<div className="content mr-auto ml-auto">
@@ -48,9 +48,9 @@ export default function Main({reviews, tipReview, web3, contract}) {
 				<br></br>
 				<input type="text" className="form-control" value={search} onChange={updateSearch} />
 				<p></p>
-				{ filteredReviews.map((review, key) => {
+				{filteredReviews.length > 0 ? filteredReviews.map((review, key) => {
 					return(
-						<div key={key} >
+						<div key={key}>
 							<div>
 								<h2>{web3.utils.hexToUtf8(review.restaurantName)}</h2>
 								<p>{web3.utils.hexToUtf8(review.cuisineType)}</p>
@@ -96,7 +96,14 @@ export default function Main({reviews, tipReview, web3, contract}) {
 							</ul>
 						</div>
 					)
-				})}
+				})
+				: <>
+					<br />
+					<div style={{ textAlign: 'center' }}>
+						<h2>No search results.</h2>
+					</div>
+				</>
+				}
 				</div>
 			</main>
 		</div>

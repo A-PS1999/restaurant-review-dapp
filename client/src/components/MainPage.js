@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
+import Pagination from "@material-ui/core/Pagination";
+import usePagination from "./usePagination.js";
 
 export default function Main({reviews, tipReview, web3, contract}) {
 	
 	const [search, setSearch] = useState("");
+	const [page, setPage] = useState(1);
 	
 	const updateSearch = (event) => {
 		setSearch(event.target.value.substr(0, 20));
@@ -15,6 +18,8 @@ export default function Main({reviews, tipReview, web3, contract}) {
 			return review.restaurantName.indexOf(web3.utils.toHex(search)) !== -1;
 	});
 	
+	let paginatedReviews = usePagination(filteredReviews, 2);
+		
 	function convertUnixTimestamp(timestamp) {
 	
 		var months_list = ['January','February','March','April','May','June',
@@ -33,6 +38,11 @@ export default function Main({reviews, tipReview, web3, contract}) {
 		return convertedDate
 	}
 	
+	const handleChange = (e, p) => {
+		setPage(p);
+		paginatedReviews.jumpPage(p);
+	}
+	
 	if (contract) {
 		contract.events.tipSent({}).on('data', function(response) {toast.success("Your  tip of " + web3.utils.fromWei(response.returnValues['_value']).toString() + 
 	" ETH has successfully been sent to the author of review #" + response.returnValues['rNo'].toString() + "!", {id: 'tipSent'})})
@@ -48,17 +58,20 @@ export default function Main({reviews, tipReview, web3, contract}) {
 				<br></br>
 				<input type="text" className="form-control" value={search} onChange={updateSearch} />
 				<p></p>
-				{filteredReviews.length > 0 ? filteredReviews.map((review, key) => {
+				{filteredReviews.length > 0 ? paginatedReviews.pageData().map((review, key) => {
 					return(
-						<div key={key}>
-							<div>
+					<>
+						<div key={key} className="card">
+							<div style={{ paddingLeft: '16px', paddingTop: '10px' }}>
 								<h2>{web3.utils.hexToUtf8(review.restaurantName)}</h2>
 								<p>{web3.utils.hexToUtf8(review.cuisineType)}</p>
 								<p className="small">Author: {review.author}</p>
 								<p className="small">Reviewed on {convertUnixTimestamp(review.reviewDate)}</p>
 							</div>
-							<p>Rating:</p>
-							<ReactStars size={50} edit={false} value={Number(review.rating)} />
+							<p style={{ paddingLeft: '16px' }}>Rating:</p>
+							<div style={{ paddingLeft: '16px' }}>
+								<ReactStars size={50} edit={false} value={Number(review.rating)} />
+							</div>
 							<ul id="reviewList" className="list-group list-group-flush">
 								<li className="list-group-item">
 									<p>{review.reviewBody}</p>
@@ -67,7 +80,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 								{ review.ipfsHash 
 								? <li className="list-group-item">
 									<p>Review Image</p>
-									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } alt="" />
+									<img src={ `https://ipfs.io/ipfs/${review.ipfsHash}` } alt="" style={{ maxWidth: '400px' }} />
 								  </li> 
 								: null
 								}
@@ -95,6 +108,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 								<hr></hr>
 							</ul>
 						</div>
+					</>
 					)
 				})
 				: <>
@@ -103,6 +117,16 @@ export default function Main({reviews, tipReview, web3, contract}) {
 						<h2>No search results.</h2>
 					</div>
 				</>
+				}
+				{filteredReviews.length > 1 
+				? 	<div style={{ paddingTop: '10px' }}>
+						<Pagination
+							count={paginatedReviews.maxPage}
+							page={page}
+							onChange={handleChange}
+						/>
+					</div>
+				: null
 				}
 				</div>
 			</main>

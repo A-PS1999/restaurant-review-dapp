@@ -1,14 +1,18 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import restaurantReviewer from "./contracts/restaurantReviewer.json";
-import { Toaster } from "react-hot-toast";
-import getWeb3 from "./utils/getWeb3.js";
+import { ThemeProvider } from '@material-ui/styles';
+import { createTheme } from '@material-ui/core/styles';
+import restaurantReviewer from './contracts/restaurantReviewer.json';
+import { Toaster } from 'react-hot-toast';
+import getWeb3 from './utils/getWeb3.js';
 import Navbar from './components/Navbar.js'
 import PageFooter from './components/Footer.js'
 import FrontPage from './components/FrontPage.js'
 import NewReview from './components/NewReview.js'
 import Main from './components/MainPage.js'
-import "./App.css";
+import './App.css';
+
+const theme = createTheme();
 
 class App extends Component {
 	
@@ -91,6 +95,7 @@ class App extends Component {
 		return <div>Loading Web3, accounts, and contract...</div>;
 	}
 	return (
+		<ThemeProvider theme={theme}>
 			<div>
 				<Router>
 				<Navbar />
@@ -117,6 +122,7 @@ class App extends Component {
 				</Router>	
 				<Toaster />
 			</div>
+		</ThemeProvider>
 		);
 	}
 }

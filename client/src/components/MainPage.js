@@ -11,6 +11,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 	
 	const updateSearch = (event) => {
 		setSearch(event.target.value.substr(0, 20));
+		setPage(1);
 	}
 	
 	let filteredReviews = reviews.filter(
@@ -18,7 +19,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 			return review.restaurantName.indexOf(web3.utils.toHex(search)) !== -1;
 	});
 	
-	let paginatedReviews = usePagination(filteredReviews, 2);
+	let paginatedReviews = usePagination(filteredReviews, 10, page, setPage);
 		
 	function convertUnixTimestamp(timestamp) {
 	

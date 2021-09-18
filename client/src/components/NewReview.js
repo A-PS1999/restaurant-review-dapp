@@ -3,7 +3,7 @@ import ReactStars from "react-rating-stars-component";
 import { Form, Container, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useForm, Controller, handleSubmit } from "react-hook-form";
-import ipfs from '../utils/ipfs';
+import ipfs from "../utils/ipfs";
 
 export default function NewReview({addReview, web3, contract}) {
 	
@@ -14,15 +14,16 @@ export default function NewReview({addReview, web3, contract}) {
 	const [buffer, setBuffer] = useState(null);
 	const [reviewRating, setReviewRating] = useState(1);
 	
-	function getHash() {
-		ipfs.files.add(Buffer.from(buffer), (error, result) => {
-			if (error) {
-				console.error(error)
-				toast.error(error.message);
-				return
-			}
-			setIpfsHash(result[0].hash);
-	});
+	async function getHash() {
+		
+		try {
+			const uploadResult = await ipfs.add(Buffer.from(buffer))
+			setIpfsHash(uploadResult.path)
+		} catch(e) {
+			console.log(e)
+			toast.error(e.message)
+			return
+		}
 	}
 	
 	useEffect(() => {
@@ -47,9 +48,6 @@ export default function NewReview({addReview, web3, contract}) {
 	function submitData(data, e) {
 		try {
 			e.preventDefault();
-			if (buffer) {
-				getHash();
-			}
 			addReview(reviewRating, web3.utils.toHex(data.restaurantName), web3.utils.toHex(data.cuisineType), data.reviewBody, ipfsHash);
 		} catch (e) {
 			console.error(e);
@@ -131,7 +129,7 @@ export default function NewReview({addReview, web3, contract}) {
 								control={control}
 								render={({ field }) => (
 									<div>
-										<img src={isFile} alt="" />
+										<img src={isFile} alt="" style={{ maxWidth: '400px' }} />
 										<input type="file" onChange={captureFile} />
 									</div>
 								)}

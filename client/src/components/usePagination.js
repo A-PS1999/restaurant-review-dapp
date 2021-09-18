@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export default function usePagination(allReviews, perPage, page, setPage) {
 	
 	const maxPage = Math.ceil(allReviews.length / perPage);

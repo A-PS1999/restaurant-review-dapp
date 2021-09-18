@@ -22,6 +22,8 @@ class App extends Component {
 		from: this.state.account }).once('confirmation', (n, receipt) => {
 			this.setState({ isLoading: false })
 			window.location.reload()
+		}).catch(function(e) {
+			console.error(e)
 		})
 	}
 	
@@ -31,6 +33,8 @@ class App extends Component {
 	'confirmation', (n, receipt) => {
 		this.setState({ isLoading: false })
 		window.location.reload()
+	  }).catch(function(e) {
+		  console.error(e)
 	  })
 	}
 	

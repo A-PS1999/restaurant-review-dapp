@@ -22,7 +22,7 @@ class App extends Component {
 		from: this.state.account }).once('confirmation', (n, receipt) => {
 			this.setState({ isLoading: false })
 			window.location.reload()
-		}).catch(function(e) {
+		}).then(this.updateCount()).catch(function(e) {
 			console.error(e)
 		})
 	}
@@ -38,61 +38,83 @@ class App extends Component {
 	  })
 	}
 	
+	updateCount = () => {
+		this.state.instance.events.reviewSubmitted({}).on('data', (response) => {
+			const newCount = response.returnValues['rNo']
+			this.setState({ reviewCount: newCount })
+		})
+	}
+	
   constructor(props) {
 	super(props)
 	this.state = {
 		web3: null,
 		account: null,
 		instance: null,
-		reviewCount: 0,
 		reviews: [],
-		isLoading: true
+		isLoading: true,
 	};
 	this.addReview = this.addReview.bind(this)
 	this.tipReview = this.tipReview.bind(this)
+	this.updateCount = this.updateCount.bind(this)
   }
 
-  async componentDidMount() {
-    try {
-      // Get network provider and web3 instance.
-	  const web3 = await getWeb3();
-	  this.setState({ web3 })
+    async componentDidMount() {
+        try {
+            // Get network provider and web3 instance.
+			const web3 = await getWeb3();
+			this.setState({ web3 })
 
-      // Use web3 to get the user's account.
-      const accounts = await web3.eth.getAccounts();
-	  this.setState({ account: accounts[0] })
-	  window.ethereum.on('accountsChanged', (accounts) => {
-		 this.setState({ account: accounts[0] }) 
-	  });
+			// Use web3 to get the user's account.
+			const accounts = await web3.eth.getAccounts();
+			this.setState({ account: accounts[0] })
+			window.ethereum.on('accountsChanged', (accounts) => {
+				this.setState({ account: accounts[0] }) 
+	        });
 
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = restaurantReviewer.networks[networkId];
+			// Get the contract instance.
+			const networkId = await web3.eth.net.getId();
+			const deployedNetwork = restaurantReviewer.networks[networkId];
 	  
-	  if(deployedNetwork) {
-		  const instance = new web3.eth.Contract(
-			restaurantReviewer.abi,
-			deployedNetwork && deployedNetwork.address,	
-		  );
-		  this.setState({ instance })
-		  const reviewCount = await instance.methods.reviewCount().call()
-		  this.setState({ instance })
+			if(deployedNetwork) {
+				const instance = new web3.eth.Contract(
+					restaurantReviewer.abi,
+					deployedNetwork && deployedNetwork.address,	
+		        );
+		        this.setState({ instance })
+				const reviewCount = await instance.methods.reviewCount().call()
+				this.setState({ instance })
+				this.setState({ reviewCount })
 		  
-		  for (let i = 1; i <= reviewCount; i++) {
-			const review = await instance.methods.reviews(i).call()
+				for (let i = 1; i <= reviewCount; i++) {
+					const review = await instance.methods.reviews(i).call()
+					this.setState({
+						reviews: [...this.state.reviews, review]
+					})
+				}
+				this.setState({ isLoading: false })
+				web3.eth.handleRevert = true;
+			} else {
+		        window.alert("The contract could not be deployed to a network.")
+	        }
+	    } catch(err) {
+			console.log(err);
+	    }
+    }
+	
+	async componentDidUpdate(prevProps, prevState) {
+		if (this.state.instance && this.state.reviewCount > prevState.reviewCount) {
+			const newReviewCount = this.state.reviewCount
+			console.log(newReviewCount)
+				
+			const newReview = await this.state.instance.methods.reviews(newReviewCount).call()
+			console.log(newReview)
+					
 			this.setState({
-				reviews: [...this.state.reviews, review]
+				reviews: [...this.state.reviews, newReview]
 			})
-		  }
-		this.setState({ isLoading: false })
-		web3.eth.handleRevert = true;
-	  } else {
-		window.alert("The contract could not be deployed to a network.")
-	  }
-	} catch(err) {
-		console.log(err);
+		}
 	}
-  }
 
   render() {
 	if (!this.state.web3) {

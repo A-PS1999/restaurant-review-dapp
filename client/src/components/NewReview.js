@@ -56,8 +56,11 @@ export default function NewReview({addReview, web3, contract}) {
 	}
 	
 	if (contract) {
-		contract.events.reviewSubmitted({}).on('data', function(response) {toast.success('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
-	' has been successfully submitted as review #' + response.returnValues['rNo'].toString() + '!', {id: 'reviewSent'})});
+		contract.events.reviewSubmitted({}).on('data', function(response) {
+			toast.success('Your review of ' + web3.utils.hexToUtf8(response.returnValues['name']) + 
+			' has been successfully submitted as review #' + response.returnValues['rNo'].toString() + 
+			'!', {id: 'reviewSent'})
+		});
 	}
 
 	return (

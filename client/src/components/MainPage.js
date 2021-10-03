@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactStars from "react-rating-stars-component";
 import Pagination from "@material-ui/core/Pagination";
+import Button from "@material-ui/core/Button";
 import usePagination from "./usePagination.js";
 
 export default function Main({reviews, tipReview, web3, contract}) {
@@ -91,8 +92,8 @@ export default function Main({reviews, tipReview, web3, contract}) {
 									</p>
 									<br></br>
 									<p>If you found the review useful, would you like to tip 0.1 ETH to the author?</p>
-									<button
-										className="button btn-info"
+									<Button
+										variant="outlined"
 										name={review.id}
 										onClick={(event) => {
 											try {
@@ -104,7 +105,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 											}
 									}}>
 										Tip
-									</button>
+									</Button>
 								</li>
 								<hr></hr>
 							</ul>

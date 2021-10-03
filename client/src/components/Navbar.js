@@ -5,14 +5,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import RestaurantMenuIcon from '@material-ui/icons/RestaurantMenu';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
 	},
-	menuButton: {
+	darkModeButton: {
 		marginRight: theme.spacing(2),
 	},
 	title: {
@@ -25,11 +24,11 @@ export default function NavBar() {
 	
 	return (
 		<div className={classes.root}>
-			<AppBar position="static" style={{backgroundColor: "lightGreen"}}>
+			<AppBar position="static" style={{ backgroundColor: "lightGreen" }}>
 				<Toolbar>
-					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
-						<MenuIcon />
-					</IconButton>
+					<div className={classes.darkModeButton}>
+						<RestaurantMenuIcon />
+					</div>
 					<Typography variant="h6" className={classes.title} style={{color: "white"}}>
 					<Link to="/">
 						<div style={{color:"white"}}>Restaurant Review Dapp</div>

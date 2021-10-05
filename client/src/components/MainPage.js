@@ -62,8 +62,8 @@ export default function Main({reviews, tipReview, web3, contract}) {
 				<p></p>
 				{filteredReviews.length > 0 ? paginatedReviews.pageData().map((review, key) => {
 					return(
-					<>
-						<div key={key} className="card">
+					<React.Fragment key={key}>
+						<div className="card">
 							<div style={{ paddingLeft: '16px', paddingTop: '10px' }}>
 								<h2>{web3.utils.hexToUtf8(review.restaurantName)}</h2>
 								<p>{web3.utils.hexToUtf8(review.cuisineType)}</p>
@@ -110,7 +110,7 @@ export default function Main({reviews, tipReview, web3, contract}) {
 								<hr></hr>
 							</ul>
 						</div>
-					</>
+					</React.Fragment>
 					)
 				})
 				: <>

@@ -22,7 +22,7 @@ serves to incentivize high quality reviews.
 
 ### Installation instructions
 1. Install [Truffle](https://www.trufflesuite.com/truffle) and [Ganache](https://www.trufflesuite.com/ganache) globally.
-Either the Ganache-CLI or GUI version should work, though I used the GUI version during development.
+Either Ganache-CLI or the GUI version should work, though I used the GUI version during development.
 
 ```
 npm install -g truffle
@@ -49,6 +49,23 @@ truffle migrate
 ```
 npm run start
 ```
+
+### Testing
+Running the unit tests varies a little depending on whether or not you are using Ganache-CLI or the GUI version.
+If you are using Ganache-CLI:
+
+```
+truffle test
+```
+
+If you used the GUI version (like I did) do the following:
+
+```
+truffle console --network ganache
+truffle test
+```
+
+The above presumes that your `truffle-config.js` is the same as mine.
 
 ### License
 MIT

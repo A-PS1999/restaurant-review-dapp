@@ -30,7 +30,7 @@ export default function NewReview({addReview, web3, contract}) {
 		if (buffer) {
 			getHash()
 		}
-	});
+	}, [buffer]);
 	
 	const captureFile = (event) => {
 		if (event.target.files[0]) {

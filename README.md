@@ -1,6 +1,6 @@
 # Restaurant Review Dapp
 
-### 💎 Visit the site: https://restaurant-review-dapp.herokuapp.com/
+### 💎 ~~Visit the site: https://restaurant-review-dapp.herokuapp.com/~~ Frontend currently not hosted
 You will need Metamask installed on your web browser and have some Ropsten testnet ETH in order to interact with the site.
 
 ### Description
